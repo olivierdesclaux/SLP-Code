@@ -320,6 +320,7 @@ def main():
 		use_target_weight=True
 	).cuda()
 
+
 	# ds adaptor
 	SLP_rd_train = SLP_RD(opts, phase='train')  # all test result
 	SLP_fd_train = SLP_FD(SLP_rd_train, opts, phase='train', if_sq_bb=True)
@@ -330,7 +331,8 @@ def main():
 	SLP_fd_test = SLP_FD(SLP_rd_test,  opts, phase='test', if_sq_bb=True)
 	test_loader = DataLoader(dataset=SLP_fd_test, batch_size = opts.batch_size // len(opts.trainset),
 	                          shuffle=False, num_workers=opts.n_thread, pin_memory=opts.if_pinMem)
-
+	# from IPython import embed
+	# embed()
 	# for visualzier
 	if opts.display_id > 0:
 		visualizer = Visualizer(opts)  # only plot losses here, a loss log comes with it,
