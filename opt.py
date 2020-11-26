@@ -11,8 +11,8 @@ def parseArgs(if_redef=True):
 	parser = configargparse .ArgumentParser(formatter_class=configargparse .ArgumentDefaultsHelpFormatter)
 
 	# -- env settings
-	parser.add_argument('--ds_fd', default='/scratch/liu.shu/datasets',
-		                    help='dataset directionry')  # for discovery
+	parser.add_argument('--ds_fd', default='D:',
+		                    help='dataset directory')  # for discovery
 	parser.add_argument('--output_dir', default='output', help='default output dirs')  # code local.
 	parser.add('--modelConf', default='config/HRpose.conf', is_config_file=True, help='Path to config file')
 	parser.add_argument('--ifb_debug', action='store_true')
@@ -107,7 +107,7 @@ def parseArgs(if_redef=True):
 	parser.add_argument('--svVis_step', default=1, type=int, help='step to save visuals')
 	parser.add_argument('--test_par', default='test',
 	                    help='the exact test portion, could be [testInLoop|test|train|all], can use the model to test on train set or test set')  # I just save default first
-
+	parser.add_argument('--if_pretrained', default = '', help='Inpute the nmT of the model you want to use')
 	opts, _ = parser.parse_known_args()  # all cmd infor
 
 	return opts
@@ -147,7 +147,13 @@ def aug_opts(opts):
 	# set tne naming needed attirbutes
 	suffix_train = (opts.suffix_ptn_train.format(
 		**vars(opts))) if opts.suffix_ptn_train != '' else ''  # std pattern
-	nmT = '_'.join([nmT, modStr, covStr, suffix_train, opts.suffix_exp_train])  # ds+ ptn_suffix+ exp_suffix
+	
+	if opts.if_pretrained != '':
+		nmT = opts.if_pretrained
+	else:
+		nmT = '_'.join([nmT, modStr, covStr, suffix_train, opts.suffix_exp_train])  # ds+ ptn_suffix+ exp_suffix
+	
+	
 	opts.name = nmT  # current experiment name
 	opts.exp_dir = osp.join(opts.output_dir, nmT)
 	opts.model_dir = osp.join(opts.exp_dir, 'model_dump')
