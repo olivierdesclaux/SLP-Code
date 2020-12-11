@@ -244,9 +244,11 @@ def validate(loader, ds_rd, model, criterion, n_iter=-1, logger=None, opts=None,
 				img_patch_vis = ut.ts2cv2(input[0], mean, std) # to CV BGR
 				img_patch_vis_flipped = ut.ts2cv2(input_flipped[0], mean, std) # to CV BGR
 				# pseudo change
-				cm = getattr(cv2,ds_rd.dct_clrMap[mod0])
-				img_patch_vis = cv2.applyColorMap(img_patch_vis, cm)
-				img_patch_vis_flipped = cv2.applyColorMap(img_patch_vis_flipped, cm)
+
+				if 'RGB' not in opts.mod_src:
+					cm = getattr(cv2,ds_rd.dct_clrMap[mod0])
+					img_patch_vis = cv2.applyColorMap(img_patch_vis, cm)
+					img_patch_vis_flipped = cv2.applyColorMap(img_patch_vis_flipped, cm)
 
 				# original version get img from the ds_rd , different size , plot ing will vary from each other
 				# warp preds to ori
