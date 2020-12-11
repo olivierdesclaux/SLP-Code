@@ -24,6 +24,8 @@ from utils.visualizer import Visualizer
 
 # opts outside?
 opts = opt.parseArgs()
+# opt.print_options(opts)
+
 if 'depth' in opts.mod_src[0]:  # the leading modalities, only depth use tight bb other raw image size
 	opts.if_bb = True  # not using bb, give ori directly
 else:
@@ -99,8 +101,10 @@ def train(loader, ds_rd, model, criterion, optimizer, epoch, n_iter=-1, logger=N
 			std = ds_rd.stds[mod0]
 			img_patch_vis = ut.ts2cv2(input[0], mean, std)  # to CV BGR, mean std control channel detach inside
 			# pseudo change
-			cm = getattr(cv2, ds_rd.dct_clrMap[mod0])
-			img_patch_vis = cv2.applyColorMap(img_patch_vis, cm)[...,::-1]  # RGB
+
+			if 'RGB' not in opts.mod_src:
+				cm = getattr(cv2, ds_rd.dct_clrMap[mod0])
+				img_patch_vis = cv2.applyColorMap(img_patch_vis, cm)[...,::-1]  # RGB
 
 			# get pred
 			pred2d_patch = np.ones((n_jt, 3))  # 3rd for  vis
@@ -308,6 +312,7 @@ def main():
 	else:
 		log_suffix = 'train'
 	logger = Colorlogger(opts.log_dir, '{}_logs.txt'.format(log_suffix))    # avoid overwritting, will append
+	# opt.print_options(opts)
 	opt.set_env(opts)
 	opt.print_options(opts, if_sv=True)
 	n_jt = SLP_RD.joint_num_ori     #
